@@ -1,0 +1,48 @@
+Contoh membuat responsive bootstrap form
+#panggil library form_libs_bootstrap
+$this->load->library('form_libs_bootstrap');
+
+#buat sebuah fungsi untuk generate form
+	private function form($action=null){
+		$form = $this->form_libs_bootstrap;
+		$data = array(
+					"form"=>array("name"=>"myform","action"=>site_url('produk/'.$action.'/'.$this->id),"id"=>"form_id","method"=>"post"),
+					"hidden"=>array("action_key"=>$this->session->userdata('action_key')),
+					"field"=>array(
+					  // Membuat 3 input dalam satu baris
+						array(
+								$form->input_dropdown_ui(array("name"=>"id_toko","label"=>"toko","option"=>self::toko_list(),"value"=>'1')),
+								$form->input_text(array("name"=>"kode_produk","label"=>"kode","value"=>'')),
+								$form->input_dropdown_ui(array("name"=>"produk_kategori","label"=>"kategori","option"=>self::produk_kategori(),"value"=>'1')),
+							),
+						// Membuat 1 input dalam satu baris
+						$form->input_text(array("name"=>"produk_name","label"=>"nama produk","value"=>'')),
+						// Membuat 1 input dalam satu baris
+						$form->input_textarea(array("name"=>"produk_desc","label"=>"deskripsi","value"=>'')),
+						// Membuat 3 input dalam satu baris
+						array(
+								$form->input_text(array("name"=>"brand_name","label"=>"merk produk","value"=>'')),
+								$form->input_text(array("name"=>"produk_price","prefix"=>"Rp.","class"=>"currency","label"=>"harga produk","value"=>'')),
+								$form->input_text(array("name"=>"produk_diskon","suffix"=>"%","class"=>"currency","label"=>"diskon","value"=>'')),
+							),
+						// Membuat 1 input dalam satu baris	
+						$form->input_text(array("name"=>"produk_url","label"=>"url produk","prefix"=>"http://","value"=>'')),
+						// Membuat 2 input dalam satu baris
+						array(
+								$form->input_text(array("name"=>"date_available","class"=>"datepicker","label"=>"tanggal tersedia","value"=>'')),
+								$form->input_text(array("name"=>"change_date","class"=>"datepicker","label"=>"batas akhir diskon","value"=>'')),
+							),
+						// Membuat submit action button	
+						$form->input_button()
+					),
+				);
+		return $form->generate($data);
+	}
+	
+	#buat fungsi untuk menampilkan hasil generate form
+	function index(){
+	  $data['form'] = self::form('save');
+	  $this->load->view('file_view',$data);
+	}
+	
+	// SELESAI
