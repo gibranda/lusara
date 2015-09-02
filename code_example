@@ -1,0 +1,48 @@
+Membuat table secara otomatis
+  #di file controller
+  #panggil library table system di fungsi __construct
+  $this->load->library('table_system');
+
+  #buat sebuah fungsi untuk generate table
+  #example
+  function grid(){
+    // Inisialisasi data yang akan ditampilkan dalam table
+    $table = $this->table_system
+                  ->from('produk') // nama table yang digunakan
+                  ->set_segment(3) // segment url terakhir yang akan dieksekusi ex: produk/index/1 -> segment ke 3
+                                    // ex : produk/cat/p/1 -> segment ke 4
+                  ->set_site_url('produk/index') // bila menggunakan contoh kedua berarti 'produk/cat/p'
+                  ->set_header(array('field_key'=>'table_header_col_1','field_key_2'=>'table_header_col2','action'=>'Action'))
+                    // field_key ini berupa field yang ada di dalam table produk, atau dapat ditambahkan field diluar dari field DB
+                    // ex : field 'action'
+                  ->buttons(
+                      array('button_attribut'=>'value') // contoh ('class'=>'btn btn-primary','href'=>'http://mysite')
+                    )
+                  ->running_queries(); // execute db queries
+                  
+    $array = $data->query_result['data'];
+		foreach ($array as $key => $value) {
+		  // menambahkan button action
+			$data->query_result['data'][$key]->action = '';
+			$data->query_result['data'][$key]->action .= $table->buttons(array("href"=>site_url('produk/manage/'.$value->id),
+				"class"=>'btn btn-sm btn-primary',"label"=>"Update"));
+			$data->query_result['data'][$key]->action .= $table->buttons(array("onclick"=>"deletion('".site_url('produk/delete/'.$value->id)."')",
+					"class"=>'btn btn-sm btn-danger',"label"=>"Delete"));
+		}
+
+		$newdata = $table->tables();
+
+		return $newdata;
+  }
+  
+  #setelah inisialisasi table, langkah selanjutnya menampilkan pada file view
+  #buat fungsi di controller, (ex:index)
+  function index(){
+   $data['output'] = self::grid();
+   $this->load->view('file_view',$data);
+  }
+  
+  // SELESAI
+
+  
+  
